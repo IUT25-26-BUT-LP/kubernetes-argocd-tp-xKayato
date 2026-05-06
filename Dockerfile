@@ -1,8 +1,9 @@
 # Étape 1 : Build
-FROM golang:1.21-alpine AS builder
+FROM golang:alpine AS builder
 WORKDIR /app
 COPY . .
-RUN go mod download
+# Update dependencies to fix vulnerabilities before building
+RUN apk add --no-cache git && go get -u ./... && go mod tidy
 RUN go build -o main .
 
 # Étape 2 : Image finale très légère (Alpine)

@@ -13,8 +13,8 @@ spec:
           kinds:
           - Pod
     validate:
-      message: "ALERTE SÉCURITÉ : Seules les images provenant de notre registre privé Harbor (mon-harbor.com) sont autorisées sur ce cluster !"
+      message: "ALERTE SÉCURITÉ : Seules les images provenant de notre registre privé Harbor (core.harbor.domain) sont autorisées sur ce cluster !"
       pattern:
         spec:
           containers:
-          - image: "mon-harbor.com/*" # 🔴 À remplacer par l'URL de votre Harbor
+          - image: "core.harbor.domain/*" # 🔴 À remplacer par l'URL de votre Harbor

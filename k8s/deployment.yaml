@@ -1,18 +1,36 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: api-hackathon
-  namespace: argocd
+  name: hackathon-api
+  namespace: default
+  labels:
+    app: hackathon-api
 spec:
-  project: default
-  source:
-    repoURL: 'https://github.com/VOTRE_USER/mon-repo-hackathon.git'
-    targetRevision: main
-    path: k8s # 👈 ArgoCD ne lira QUE ce dossier !
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hackathon-api
+  template:
+    metadata:
+      labels:
+        app: hackathon-api
+    spec:
+      containers:
+      - name: api
+        # 🔴 L'URL de l'image. Le "latest" sera remplacé automatiquement par GitHub Actions.
+        image: mon-harbor.com/hackathon/api:latest 
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hackathon-api-svc
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: hackathon-api
+  ports:
+    - port: 80
+      targetPort: 8080

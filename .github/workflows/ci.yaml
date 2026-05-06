@@ -1,27 +1,44 @@
-name: CI & SecOps
+name: CI & SecOps (Mono-repo)
 
 on:
   push:
     branches: [ "main" ]
+    # 🛑 MAGIE ICI : On ignore les pushs faits dans le dossier k8s
+    paths-ignore:
+      - 'k8s/**'
 
 jobs:
-  build-scan-push:
+  build-scan-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
       - name: Build Docker Image
+        # On utilise le SHA du commit comme tag unique
         run: docker build -t mon-harbor.com/hackathon/api:${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner
+      - name: Scan avec Trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'mon-harbor.com/hackathon/api:${{ github.sha }}'
           format: 'table'
-          exit-code: '1' # Fait échouer le pipeline si des failles sont trouvées
-          severity: 'CRITICAL,HIGH' # On bloque les failles critiques et hautes
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
 
-      - name: Push to Harbor (Si Trivy est OK)
+      - name: Push sur Harbor
         run: |
           docker login mon-harbor.com -u ${{ secrets.HARBOR_USER }} -p ${{ secrets.HARBOR_TOKEN }}
           docker push mon-harbor.com/hackathon/api:${{ github.sha }}
+
+      - name: Mettre à jour le tag pour ArgoCD
+        # Si Trivy est ok et que l'image est sur Harbor, on met à jour le fichier YAML
+        run: |
+          # Remplace l'ancien tag par le nouveau dans deployment.yaml
+          sed -i "s|image: mon-harbor.com/hackathon/api:.*|image: mon-harbor.com/hackathon/api:${{ github.sha }}|g" k8s/deployment.yaml
+          
+          # On commit la modification
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add k8s/deployment.yaml
+          git commit -m "Déploiement auto : mise à jour de l'image vers ${{ github.sha }}"
+          git push

@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hackathon-gitops
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # 🔴 À remplacer par l'URL de VOTRE dépôt GitHub
+    repoURL: 'https://github.com/IUT25-26-BUT-LP/kubernetes-argocd-tp-xKayato/' 
+    targetRevision: main
+    # 🔴 Très important : on cible uniquement le dossier k8s
+    path: k8s 
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

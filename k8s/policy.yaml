@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-image-registries
+spec:
+  validationFailureAction: Enforce # "Enforce" bloque le pod. "Audit" laisse passer mais alerte.
+  background: false
+  rules:
+  - name: only-allow-harbor
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      message: "ALERTE SÉCURITÉ : Seules les images provenant de notre registre privé Harbor (mon-harbor.com) sont autorisées sur ce cluster !"
+      pattern:
+        spec:
+          containers:
+          - image: "mon-harbor.com/*" # 🔴 À remplacer par l'URL de votre Harbor

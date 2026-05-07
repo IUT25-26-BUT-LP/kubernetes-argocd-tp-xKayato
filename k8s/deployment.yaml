@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: core.harbor.domain/hackathon/api:latest 
+        image: 10.6.0.190/thomas_d/api:latest 
         ports:
         - containerPort: 80
 ---

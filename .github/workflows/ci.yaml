@@ -8,7 +8,7 @@ on:
       - 'k8s/**'
 
 env:
-  IMAGE_NAME: core.harbor.domain/hackathon/api # URL HARBOR
+  IMAGE_NAME: 10.6.0.190/thomas_d/api
 
 jobs:
   build-scan-deploy:
@@ -30,8 +30,7 @@ jobs:
 
       - name: Connexion et Push sur Harbor
         run: |
-          # N'oubliez pas de configurer ces secrets dans GitHub (Settings > Secrets and variables)
-          docker login core.harbor.domain -u ${{ secrets.HARBOR_USER }} -p ${{ secrets.HARBOR_TOKEN }}
+          docker login core.harbor.domain -u admin -p Harbor12345
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Mise à jour du manifeste Kubernetes (GitOps)

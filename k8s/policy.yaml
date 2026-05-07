@@ -17,4 +17,4 @@ spec:
       pattern:
         spec:
           containers:
-          - image: "core.harbor.domain/*" # 🔴 À remplacer par l'URL de votre Harbor
+          - image: "core.harbor.domain/*" # URL HARBOR

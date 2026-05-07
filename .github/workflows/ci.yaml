@@ -8,11 +8,11 @@ on:
       - 'k8s/**'
 
 env:
-  IMAGE_NAME: core.harbor.domain/hackathon/api # 🔴 À MODIFIER AVEC VOTRE URL HARBOR
+  IMAGE_NAME: core.harbor.domain/hackathon/api # URL HARBOR
 
 jobs:
   build-scan-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout du code
         uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
 
       - name: Connexion et Push sur Harbor
         run: |
-          # 🔴 N'oubliez pas de configurer ces secrets dans GitHub (Settings > Secrets and variables)
+          # N'oubliez pas de configurer ces secrets dans GitHub (Settings > Secrets and variables)
           docker login core.harbor.domain -u ${{ secrets.HARBOR_USER }} -p ${{ secrets.HARBOR_TOKEN }}
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
 

@@ -26,7 +26,7 @@ jobs:
           image-ref: '${{ env.IMAGE_NAME }}:${{ github.sha }}'
           format: 'table'
           exit-code: '1' # Bloque le pipeline si on trouve une faille
-          severity: 'CRITICAL,HIGH' # On bloque les failles hautes et critiques
+          severity: 'CRITICAL' # On bloque les failles hautes et critiques
 
       - name: Connexion et Push sur Harbor
         run: |

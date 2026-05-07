@@ -3,7 +3,7 @@ name: CI & SecOps Pipeline
 on:
   push:
     branches: [ "main" ]
-    # On évite la boucle infinie : on ignore les modifications faites par le bot !
+    # On évite la boucle infinie : on ignore les modifications faites par le bot !!
     paths-ignore:
       - 'k8s/**'
 
